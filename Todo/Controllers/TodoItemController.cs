@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Todo.Data;
@@ -29,7 +30,7 @@ namespace Todo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TodoItemCreateFields fields)
+        public async Task<IActionResult> Create([FromBody] TodoItemCreateFields fields)
         {
             if (!ModelState.IsValid) { return View(fields); }
 
@@ -38,7 +39,7 @@ namespace Todo.Controllers
             await dbContext.AddAsync(item);
             await dbContext.SaveChangesAsync();
 
-            return RedirectToListDetail(fields.TodoListId);
+            return Ok(fields.TodoListId);
         }
 
         [HttpGet]

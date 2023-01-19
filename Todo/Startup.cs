@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Todo.Services;
+using System.Net.Security;
 
 namespace Todo
 {
@@ -41,6 +42,7 @@ namespace Todo
             services.AddControllers();
 
             services.AddHttpClient();
+            services.AddMemoryCache();
             services.AddScoped<IExternalUserService, GravatarUserService>();
 
             services.AddAuthorization(options =>

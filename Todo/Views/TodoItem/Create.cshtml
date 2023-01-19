@@ -15,13 +15,11 @@
 
 <div class="col-md-4">
     <section>
-        <form method="post">
-
             @Html.AntiForgeryToken()
 
             @Html.HiddenFor(m => m.TodoListTitle)
 
-            <div class="form-group">
+            <div id="test" class="form-group">
                 <label asp-for="Title"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
@@ -49,9 +47,65 @@
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-default">Save</button>
+                <a href="#" id="SaveItemButton" class="btn btn-default">Save</a>
             </div>
-
-        </form>
     </section>
 </div>
+
+<script type="text/javascript">
+    function deferredLoad(method) {
+        if (window.jQuery) {
+            method()
+        } else {
+            setTimeout(function() { deferredLoad(method) }, 100);
+        }
+    }
+
+    deferredLoad(initialize);
+
+    function initialize() {
+        $("#SaveItemButton").click(function () {
+
+            const url = window.location.origin + "/TodoItem/Create";
+            const urlParams = new URLSearchParams(window.location.search);
+            const todoListId = urlParams.get('todoListId');
+            const importance = $('#Importance').val();
+            let importanceParsed = 0;
+            switch(importance) {
+                case 'Low':
+                    importanceParsed = 2;
+                    break;
+                case 'Medium':
+                    importanceParsed = 1;
+                    break;
+                case 'High':
+                    importanceParsed = 0;
+                    break;
+            }
+
+            const request = {
+                "Title": $('#Title').val(),
+                "TodoListId": todoListId,
+                "ResponsiblePartyId": $('#ResponsiblePartyId').val(),
+                "Importance": importanceParsed,
+                "Rank": 0
+            };
+
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: JSON.stringify(request),
+                contentType: "application/json; charset=utf-8",
+                headers: {
+                    "RequestVerificationToken": $('input[name = __RequestVerificationToken]').val()
+                },
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (err) {
+
+                }
+            });
+        });
+    }
+</script>

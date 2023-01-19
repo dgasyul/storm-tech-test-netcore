@@ -25,12 +25,6 @@
             )
         </li>
 
-        <li class="list-group-item">
-            <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
-                <strong>Add New Item</strong>
-            </a>
-        </li>
-
         @{
             IEnumerable<TodoItemSummaryViewmodel> items;
             if (!Model.ShouldShowDoneItems)
@@ -111,6 +105,12 @@
        asp-route-sortOrder="@Model.SortOrder">
         @(Model.ShouldShowDoneItems ? "Do not show Done Items" : "Show Done Items")
     </a>
+</div>
+
+<div>
+    @await Html.PartialAsync(
+        "../TodoItem/Create.cshtml",
+        new TodoItemCreateFields(Model.TodoListId, Model.Title, User.Id(), 0))
 </div>
 
 @section Scripts {
