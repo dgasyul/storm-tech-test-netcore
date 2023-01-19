@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Todo.Data;
 using Todo.Data.Entities;
 using Todo.EntityModelMappers.TodoLists;
+using Todo.Models;
 using Todo.Models.TodoLists;
 using Todo.Services;
 
@@ -31,10 +32,10 @@ namespace Todo.Controllers
             return View(viewmodel);
         }
 
-        public IActionResult Detail(int todoListId, bool shouldShowDoneItems)
+        public IActionResult Detail(int todoListId, bool shouldShowDoneItems, TodoListSortOrder sortOrder)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
-            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, shouldShowDoneItems);
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, shouldShowDoneItems, sortOrder);
             return View(viewmodel);
         }
 

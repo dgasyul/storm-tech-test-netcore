@@ -23,7 +23,7 @@ namespace Todo.Controllers
         public IActionResult Create(int todoListId)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
-            var fields = TodoItemCreateFieldsFactory.Create(todoList, User.Id());
+            var fields = TodoItemCreateFieldsFactory.Create(todoList, User.Id(), 0);
             return View(fields);
         }
 
@@ -33,7 +33,7 @@ namespace Todo.Controllers
         {
             if (!ModelState.IsValid) { return View(fields); }
 
-            var item = new TodoItem(fields.TodoListId, fields.ResponsiblePartyId, fields.Title, fields.Importance);
+            var item = new TodoItem(fields.TodoListId, fields.ResponsiblePartyId, fields.Title, fields.Importance, fields.Rank);
 
             await dbContext.AddAsync(item);
             await dbContext.SaveChangesAsync();

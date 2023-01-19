@@ -12,6 +12,18 @@
 
 <div class="col-md-6">
     <ul class="list-group">
+        <li class="list-group-item">
+            @Html.DropDownListFor(
+                m => m.SortOrder,
+                new List<SelectListItem>
+                {
+                    new SelectListItem("Low Importance", TodoListSortOrder.LowImportance.ToString()),
+                    new SelectListItem("High Importance", TodoListSortOrder.HighImportance.ToString()),
+                    new SelectListItem("Lowest Rank", TodoListSortOrder.LowestRank.ToString()),
+                    new SelectListItem("Highest Rank", TodoListSortOrder.HighestRank.ToString()),
+                }
+            )
+        </li>
 
         <li class="list-group-item">
             <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
@@ -30,7 +42,21 @@
                 items = Model.Items;
             }
 
-            items = items.OrderBy(i => i.Importance);
+            switch (Model.SortOrder)
+            {
+                case TodoListSortOrder.LowImportance:
+                    items = items.OrderByDescending(i => i.Importance);
+                    break;
+                case TodoListSortOrder.HighImportance:
+                    items = items.OrderBy(i => i.Importance);
+                    break;
+                case TodoListSortOrder.LowestRank:
+                    items = items.OrderBy(i => i.Rank);
+                    break;
+                case TodoListSortOrder.HighestRank:
+                    items = items.OrderByDescending(i => i.Rank);
+                    break;
+            }
         }
 
         @foreach (var item in items)
@@ -79,7 +105,27 @@
             </li>
         }
     </ul>
-    <a asp-action="Detail" asp-route-todoListId="@Model.TodoListId" asp-route-shouldShowDoneItems="@(!Model.ShouldShowDoneItems)">
+    <a asp-action="Detail"
+        asp-route-todoListId="@Model.TodoListId"
+        asp-route-shouldShowDoneItems="@(!Model.ShouldShowDoneItems)"
+       asp-route-sortOrder="@Model.SortOrder">
         @(Model.ShouldShowDoneItems ? "Do not show Done Items" : "Show Done Items")
     </a>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        const $sortDropdown = $('select#SortOrder');
+        $sortDropdown.change(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const todoListId = urlParams.get('todoListId');
+            const shouldShowDoneItems = urlParams.get('shouldShowDoneItems');
+            const url = window.location.origin
+                + window.location.pathname
+                + "?todoListId=" + todoListId
+                + "&shouldShowDoneItems=" + shouldShowDoneItems
+                + "&sortOrder=" + $sortDropdown.val();
+            window.location.href = url;
+        });
+    </script>
+}
