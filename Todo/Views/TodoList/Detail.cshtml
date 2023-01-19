@@ -1,5 +1,6 @@
 ﻿@using Todo.Controllers
 @using Todo.Data.Entities
+@using Todo.Models.TodoItems;
 @using Todo.Services
 @model Todo.Models.TodoLists.TodoListDetailViewmodel
 
@@ -10,7 +11,6 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="col-md-6">
-
     <ul class="list-group">
 
         <li class="list-group-item">
@@ -19,7 +19,21 @@
             </a>
         </li>
 
-        @foreach (var item in Model.Items.OrderBy(i => i.Importance))
+        @{
+            IEnumerable<TodoItemSummaryViewmodel> items;
+            if (!Model.ShouldShowDoneItems)
+            {
+                items = Model.Items.Where(i => !i.IsDone);
+            }
+            else
+            {
+                items = Model.Items;
+            }
+
+            items = items.OrderBy(i => i.Importance);
+        }
+
+        @foreach (var item in items)
         {
             string contextualClass;
             switch (item.Importance)
@@ -62,8 +76,10 @@
                     </small>
                 </div>
                 </div>
-
             </li>
         }
     </ul>
+    <a asp-action="Detail" asp-route-todoListId="@Model.TodoListId" asp-route-shouldShowDoneItems="@(!Model.ShouldShowDoneItems)">
+        @(Model.ShouldShowDoneItems ? "Do not show Done Items" : "Show Done Items")
+    </a>
 </div>
