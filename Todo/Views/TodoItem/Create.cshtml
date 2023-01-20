@@ -53,16 +53,6 @@
 </div>
 
 <script type="text/javascript">
-    function deferredLoad(method) {
-        if (window.jQuery) {
-            method()
-        } else {
-            setTimeout(function() { deferredLoad(method) }, 100);
-        }
-    }
-
-    deferredLoad(initialize);
-
     function initialize() {
         $("#SaveItemButton").click(function () {
 
@@ -108,4 +98,6 @@
             });
         });
     }
+
+    initialize();
 </script>
